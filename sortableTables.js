@@ -2,11 +2,6 @@
  * copyright 2016, Gregory Vigo Torres
 */
 
-/* TODO
- * example table
- * REDAME
- * */
-
 
 function SortableTable() { 
     this.name = "SortableTable";
@@ -100,17 +95,25 @@ SortableTable.prototype.replaceTableRows = function(rows, index) {
     };
 };
 
-/* Sorting functions */
+/* Sort functions */
 
 SortableTable.prototype.sortByDate = function(index) {
-    /* The string in the column to be sorted must be dd/mm/yyyy */
     if (index === undefined) { return null; };
+
+    function parseDateStr(str) {
+        /* Must return Array [yyyy, mm, dd] to be passed into new Date(Arr)
+         * Default format is dd/mm/yyyy
+         * This is here to make implementing custom date formats easier 
+        */
+        var strArr = str.split('/').reverse();
+        var Arr = strArr.map(function(val) { return parseInt(val, 10); });
+        return Arr;
+    };
 
     function toDate(row) {
         var Str = row.children[index].textContent.trim(); 
-        var Arr = Str.split('/').reverse();
-        var fmtArr = Arr.map(function(val) { return parseInt(val, 10); });
-        var dateObj = new Date(fmtArr);
+        var DateArr = parseDateStr(Str);
+        var dateObj = new Date(DateArr);
         return dateObj
     };
 
