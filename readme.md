@@ -1,4 +1,4 @@
-##SortableTables.js## 
+##SortableTables.js 
 
 A simple Javascript library to make html tables sortable.
 It uses Array.from, which may not be available in your Javascript version. 
@@ -29,4 +29,5 @@ Rows can be skipped using class *skip-sort*.
 
 
 MIT License
+
 Copyright 2016, Gregory Vigo Torres
