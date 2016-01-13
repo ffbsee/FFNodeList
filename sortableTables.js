@@ -55,8 +55,6 @@ SortableTable.prototype.replaceTableRows = function(rows, index) {
     this.allRows.forEach(function(val, ind, arr) {
         val.remove();
     });
-
-    console.log(this.skipRows);
     
     var body = this.sortableTable.getElementsByTagName('tbody')[0];
     if (!body) { body = this.sortableTable; };
