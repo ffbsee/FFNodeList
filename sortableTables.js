@@ -27,7 +27,7 @@ SortableTable.prototype.initSortableRows = function() {
 
     this.sortableHeaders = Array.from(this.sortableTable.querySelectorAll('.sortable tr th'));
 
-    var that = this;
+    // var that = this;
     for (var i=0; i<this.sortableHeaders.length; i++) {
         /* eventListener callback first arg is the event */
         this.sortableHeaders[i].addEventListener('click', this.getCol.bind(this));
