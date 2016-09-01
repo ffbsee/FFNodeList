@@ -1,11 +1,13 @@
 #!/usr/bin/perl
+sleep 42; #Verzögerung damit die nodes.json vom meshviewer erzeugt ist...
 use strict;
 use warnings;
 use JSON;
 use utf8;
-
+print "FFListe wird erzeugt!";
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
+
 
 our $json_source = "/var/www/meshviewer/nodes.json";
 our $export = "index.html";
@@ -43,7 +45,7 @@ our $ffbsee_json = $json->decode( $json_text ); #decode nodes.json
 #	Generiert das HTML:
 #
 $html_ffbsee .= "<!doctype html>\n<html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
-#  $html_ffbsee .= "\n";
+$html_ffbsee .= "\n";
 $html_ffbsee .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">";
 $html_ffbsee .= "\n    <title>$fftitle</title>\n";
 #	CSS
@@ -57,9 +59,11 @@ $html_ffbsee .= "\n        .odd {\n            background-color: rgba(180, 180, 
 #	Generate FFNodes
 #
 $html_ffbsee .= "  </head>\n\n  <body>\n";
-$html_ffbsee .= "    <h1>$fftitle</h1>\n";
-$html_ffbsee .= "<a href=\"$ffSupernode\">$ffSupernode</a>\n";
+$html_ffbsee .= "<nav>";
+$html_ffbsee .= "<a href=\"https://$ffSupernode/\">$ffSupernode</a>\n";
+$html_ffbsee .= "</nav>";
 our $ffDate = $ffbsee_json->{"meta"}->{"timestamp"};
+$html_ffbsee .= "    <h1>$fftitle</h1>\n";
 $html_ffbsee .= "\n<div class=\"generated\"><a>Generiert: $ffDate</a></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
 $html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Clients:</th>\n";
@@ -123,3 +127,4 @@ open (DATEI, "> $export") or die $!;
     print DATEI $html_ffbsee;
    
 close (DATEI);
+print"\n";
