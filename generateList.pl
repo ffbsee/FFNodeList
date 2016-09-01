@@ -13,6 +13,7 @@ our $html_ffbsee;
 our $ffcommunity = "Freifunk Bodensee";
 our $fflink = "https://freifunk-bodensee.net/";
 our $fftitle = "Freifunk Node Liste";
+our $ffSupernode = `hostname`;
 our $debug;
 
 while (my $arg = shift @ARGV) {
@@ -49,6 +50,7 @@ $html_ffbsee .= "\n    <title>$fftitle</title>\n";
 $html_ffbsee .= "\n    <style>\n        table {\n            width: 100%;\n        }\n\n        th {\n            cursor: default;\n        }\n\n        thead th:hover {\n            text-decoration: underline;\n        }\n";
 $html_ffbsee .= ".online {\nbackground-color: rgba(128, 255, 128, 0.4);\n}\n.offline {\nbackground-color: rgba(255, 128, 128, 0.07)\n}\n";
 $html_ffbsee .= "\n        .amount {\n            text-align: right;\n        }\n\n        .skip-sort {\n            background-color: black;\n            color: white;\n        }\n";
+$html_ffbsee .= "\n.generated {\nbackground-color: rgba(128, 255, 172, 0.4);\n width: 25em;\ntext-align: center;\nmargin: auto;\npadding: 1.2em;\npadding-left: 15em;\nmargin-right: -6em;\nmargin-top: -7em;\n    -webkit-transform: rotate(20deg);\n    -moz-transform: rotate(20deg);\n    -o-transform: rotate(20deg);\n    writing-mode: lr-tb;\n}\n";
 $html_ffbsee .= "\n        .odd {\n            background-color: rgba(180, 180, 255, 0.9);\n        }\n\n    </style>\n";
 
 #
@@ -56,8 +58,11 @@ $html_ffbsee .= "\n        .odd {\n            background-color: rgba(180, 180, 
 #
 $html_ffbsee .= "  </head>\n\n  <body>\n";
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
+$html_ffbsee .= "<a href=\"$ffSupernode\">$ffSupernode</a>\n";
+our $ffDate = $ffbsee_json->{"meta"}->{"timestamp"};
+$html_ffbsee .= "\n<div class=\"generated\"><a>Generiert: $ffDate</a></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
-$html_ffbsee .= "          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Clients:</th>\n";
+$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Clients:</th>\n";
 $html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
 $html_ffbsee .= "          <th class=\"str-sort\">Firmware:</th>\n           <th class=\"str-sort\">Hardware:</th>\n           <th class=\"str-sort\">Community:</th>\n";
 $html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n";
