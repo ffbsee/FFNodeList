@@ -8,7 +8,7 @@ use utf8;
 
 
 our $json_source = "/var/www/meshviewer/nodes.json";
-our $export = "index.html";
+our $export = "/var/www/FFNodeList/index.html";
 our $html_ffbsee;
 our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
@@ -29,7 +29,7 @@ while (my $arg = shift @ARGV) {
 	}
 	
 }
-if (not($debug)){sleep 42;}
+if (not($debug)){sleep 0.42;}
 open(DATEI, $json_source) or die "Datei wurde nicht gefunden\n";
     my $daten;
     while(<DATEI>){
@@ -63,6 +63,8 @@ $html_ffbsee .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"http
 $html_ffbsee .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
 $html_ffbsee .= "</ul>";
 our $ffDate = $ffbsee_json->{"meta"}->{"timestamp"};
+$ffDate .= " <br/>";
+$ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
 $html_ffbsee .= "\n<div class=\"generated\"><a>Aktualisiert: $ffDate</a></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
