@@ -51,8 +51,9 @@ $html_ffbsee .= "\n    <style>\n        table {\n            width: 100%;\n     
 $html_ffbsee .= ".online {\nbackground-color: rgba(128, 255, 128, 0.4);\n}\n.offline {\nbackground-color: rgba(255, 128, 128, 0.07)\n}\n";
 $html_ffbsee .= "\n        .amount {\n            text-align: right;\n        }\n\n        .skip-sort {\n            background-color: black;\n            color: white;\n        }\n";
 $html_ffbsee .= "ul {\n    list-style-type: none;\n    margin: -5px;\n    padding: 0;\n    overflow: hidden;\n    background-color: #333;\n}\n\nli {\n    float: left;\n}\n\nli a {\n    display: block;\n    color: white;\n    text-align: center;\n    padding: 14px 16px;\n    text-decoration: none;\n}\n\nli a:hover {\n    background-color: #111;\n}\n";
-$html_ffbsee .= "\n.generated {\noverflow: hidden;\noverflow-x: hidden;\nbackground-color: rgba(128, 255, 172, 0.4);\n width: 12em;\ntext-align: center;\nmargin: auto;\npadding: 0.4em;\npadding-left: 15em;\npadding-right: 4.2em;\nmargin-right: -2em;\nmargin-top: -7em;\n    -webkit-transform: rotate(20deg);\n    -moz-transform: rotate(20deg);\n    -o-transform: rotate(20deg);\n    writing-mode: lr-tb;\n}\n";
-$html_ffbsee .= "\n        .odd {\n            background-color: rgba(180, 180, 255, 0.9);\n        }\n\n    </style>\n";
+$html_ffbsee .= ".g2  {\noverflow: hidden;\nmargin: auto\noverflow-x: hidden;\nwidth: 50%;\nmargin-left: 50%;\ntext-align; right;\nmin-height: 16em;\n margin-top: -8em;\nmargin-bottom: -8em;\n\n}\n";
+$html_ffbsee .= "\n.generated {\noverflow: hidden;\noverflow-x: hidden;\nbackground-color: rgba(128, 255, 172, 0.4);\n min-width: 15em;\ntext-align: center;\nmargin: auto;\nmargin-right: -20em;\nmargin-top: 6em;\npadding: 0.4em;\npadding-left: 23em;\npadding-right: 23em;\n    -webkit-transform: rotate(20deg);\n    -moz-transform: rotate(20deg);\n    -o-transform: rotate(20deg);\n    writing-mode: lr-tb;\n}\n";
+$html_ffbsee .= "\n        .odd {\n            background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
 
 #
 #	Generate FFNodes
@@ -62,11 +63,12 @@ $html_ffbsee .= "<ul>";
 $html_ffbsee .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
 $html_ffbsee .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
 $html_ffbsee .= "</ul>";
-our $ffDate = $ffbsee_json->{"meta"}->{"timestamp"};
-$ffDate .= " <br/>";
+our $ffDate = "<!--";
+$ffDate .= $ffbsee_json->{"meta"}->{"timestamp"};
+$ffDate .= " <br/> -->";
 $ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
-$html_ffbsee .= "\n<div class=\"generated\"><a>Aktualisiert: $ffDate</a></div>\n";
+$html_ffbsee .= "\n<div class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
 $html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Clients:</th>\n";
 $html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
