@@ -89,8 +89,15 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     my $ffNodeLnk = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"node_id"};
     $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">$ffNodeName</a></td>";
     my $ffNodeOnline = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"flags"}->{"online"};
+    my $ffNodeURL;
+    if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"})){
+        $ffNodeURL .= " href=\"http://[";
+        $ffNodeURL .= $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1];
+        $ffNodeURL .= "]/\"";
+    }
+    else { $ffNodeURL = "";}
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
-        $html_ffbsee .= "<td class=\"online\"><a>online</a></td>";
+        $html_ffbsee .= "<td class=\"online\"><a $ffNodeURL>online</a></td>";
     }
     else {
         $html_ffbsee .= "<td class=\"offline\"><a>offline</a></td>";
