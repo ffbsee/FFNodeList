@@ -53,7 +53,8 @@ $html_ffbsee .= "\n        .amount {\n            text-align: right;\n        }\
 $html_ffbsee .= "ul {\n    list-style-type: none;\n    margin: -5px;\n    padding: 0;\n    overflow: hidden;\n    background-color: #333;\n}\n\nli {\n    float: left;\n}\n\nli a {\n    display: block;\n    color: white;\n    text-align: center;\n    padding: 14px 16px;\n    text-decoration: none;\n}\n\nli a:hover {\n    background-color: #111;\n}\n";
 $html_ffbsee .= ".g2  {\noverflow: hidden;\nmargin: auto\noverflow-x: hidden;\nwidth: 50%;\nmargin-left: 50%;\ntext-align; right;\nmin-height: 16em;\n margin-top: -8em;\nmargin-bottom: -8em;\n\n}\n";
 $html_ffbsee .= "\n.generated {\noverflow: hidden;\noverflow-x: hidden;\nbackground-color: rgba(128, 255, 172, 0.4);\n min-width: 15em;\ntext-align: center;\nmargin: auto;\nmargin-right: -20em;\nmargin-top: 6em;\npadding: 0.4em;\npadding-left: 23em;\npadding-right: 23em;\n    -webkit-transform: rotate(20deg);\n    -moz-transform: rotate(20deg);\n    -o-transform: rotate(20deg);\n    writing-mode: lr-tb;\n}\n";
-$html_ffbsee .= "\n        .odd {\n            background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
+$html_ffbsee .= "thead tr {\nbackground: rgba(0, 255, 255, 0.7);\npadding-top: 1em;\npadding-bottom: 0.5em;\n}\n";
+$html_ffbsee .= "\n        .odd {\n       background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
 
 #
 #	Generate FFNodes
