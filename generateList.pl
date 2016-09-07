@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use JSON;
 use utf8;
+use LWP::Simple;
+
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
 
@@ -39,6 +41,18 @@ close (DATEI);
 our $json_text = $daten;
 our $json = JSON->new->utf8; #force UTF8 Encoding
 our $ffbsee_json = $json->decode( $json_text ); #decode nodes.json
+our $ffNodesOnline = 0;
+our $ffNodesInsg = 0;
+our $ffClientInsg = 0;
+our $ffNodeGeo = 0;
+our $ffNodeFW = 0;
+
+my $url = 'http://vpn1.ffbsee.de/freifunk/firmware/autoupdater/manifest';
+my $content = get( $url );
+my @wort = split /\n/, $content;
+$content = $wort[23];
+@wort = split / /, $content;
+our $firmware = $wort[1];
 #
 #	Generiert das HTML:
 #
@@ -54,6 +68,8 @@ $html_ffbsee .= "ul {\n    list-style-type: none;\n    margin: -5px;\n    paddin
 $html_ffbsee .= ".g2  {\noverflow: hidden;\nmargin: auto\noverflow-x: hidden;\nwidth: 50%;\nmargin-left: 50%;\ntext-align; right;\nmin-height: 16em;\n margin-top: -8em;\nmargin-bottom: -8em;\n\n}\n";
 $html_ffbsee .= "\n.generated {\noverflow: hidden;\noverflow-x: hidden;\nbackground-color: rgba(128, 255, 172, 0.4);\n min-width: 15em;\ntext-align: center;\nmargin: auto;\nmargin-right: -20em;\nmargin-top: 6em;\npadding: 0.4em;\npadding-left: 23em;\npadding-right: 23em;\n    -webkit-transform: rotate(20deg);\n    -moz-transform: rotate(20deg);\n    -o-transform: rotate(20deg);\n    writing-mode: lr-tb;\n}\n";
 $html_ffbsee .= "thead tr {\nbackground: rgba(0, 255, 255, 0.7);\npadding-top: 1em;\npadding-bottom: 0.5em;\n}\n";
+$html_ffbsee .= "tfoot tr {\nbackground: rgba(0, 255, 255, 0.7);\npadding-top: 1em;\npadding-bottom: 0.5em;\ntext-align: center;\n}\n";
+$html_ffbsee .= "tfoot {\ntext-align: center;\n}\n";
 $html_ffbsee .= "\n        .odd {\n       background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
 
 #
@@ -99,22 +115,29 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     else { $ffNodeURL = "";}
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
         $html_ffbsee .= "<td class=\"online\"><a $ffNodeURL>online</a></td>";
+        $ffNodesOnline = int($ffNodesOnline) + 1;
     }
     else {
         $html_ffbsee .= "<td class=\"offline\"><a>offline</a></td>";
     }
+    $ffNodesInsg = $ffNodesInsg + 1;
     my $ffClients = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"clients"};
     $html_ffbsee .= "<td>$ffClients</td>";
+    $ffClientInsg = $ffClientInsg + $ffClients;
 #    $html_ffbsee .= "<td></td>"; #WLAN Links
 #    $html_ffbsee .= "<td></td>"; #VPN
     my $ffNodeVPN;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"location"})){
         $ffNodeVPN = "ja";
+        $ffNodeGeo = $ffNodeGeo + 1;
     } else { $ffNodeVPN = "nein";}
     $html_ffbsee .= "<td>$ffNodeVPN</td>";
     my $ffNodeFirmware;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"software"}->{"firmware"}->{"release"})){
         $ffNodeFirmware = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"software"}->{"firmware"}->{"release"};
+        if ($ffNodeFirmware eq "ffbsee-$firmware"){
+            $ffNodeFW = $ffNodeFW + 1;
+        }
     } else {$ffNodeFirmware = "";}
     $html_ffbsee .= "<td>$ffNodeFirmware</td>";
 
@@ -130,6 +153,14 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     $html_ffbsee .= "</tr>\n";
 }
 
+$html_ffbsee .= "<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
+$html_ffbsee .= "<td>$ffClientInsg<br/>Clients online</td>\n";
+my $ffNodeGeoP = 100 / int($ffNodesInsg) * int($ffNodeGeo);
+my $ffNodeGeoPS = int(100 * $ffNodeGeoP + 0.5 ) / 100;
+$html_ffbsee .= "<td>$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
+my $ffNodeFWP = int(100 * 100 / int($ffNodesInsg) * int($ffNodeFW) + 0.5) / 100;
+$html_ffbsee .= "<td>$ffNodeFWP<br/>mit $firmware</td>\n";
+$html_ffbsee .= "\n</tr>\n</tfoot>\n";
 #
 #	EOFFNodes
 #
