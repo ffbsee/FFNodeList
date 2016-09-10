@@ -53,6 +53,7 @@ my @wort = split /\n/, $content;
 $content = $wort[23];
 @wort = split / /, $content;
 our $firmware = $wort[1];
+our $ffC = 0;
 #
 #	Generiert das HTML:
 #
@@ -81,6 +82,7 @@ $html_ffbsee .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"http
 $html_ffbsee .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
 $html_ffbsee .= "</ul>";
 our $ffDate = "<!--";
+our $ffHwP = 0;
 $ffDate .= $ffbsee_json->{"meta"}->{"timestamp"};
 $ffDate .= " <br/> -->";
 $ffDate .= `date`;
@@ -96,6 +98,10 @@ $html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n
 $html_ffbsee .= "\n       <tbody>\n";
 my $runXTime = 1;
 my $hashref_ffbsee = $ffbsee_json->{"nodes"};
+our $ffCB = 0;
+our $ffCFn = 0;
+our $ffCU = 0;
+our $ffCT = 0;
 for my $ffkey (keys %{$hashref_ffbsee}) {
     if ($runXTime == 1){
         $runXTime = 0;
@@ -144,12 +150,24 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     my $ffHardware;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hardware"}->{"model"})){
         $ffHardware = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hardware"}->{"model"};
+        $ffHwP = $ffHwP + 1;
     } else {$ffHardware = "";}
     $html_ffbsee .= "<td>$ffHardware</td>";
 
     my $ffCommunity = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"system"}->{"site_code"};
     $html_ffbsee .= "<td>$ffCommunity</td>";
- 
+    if ($ffCommunity eq "bodensee"){
+        $ffCB = $ffCB + 1;
+    }
+    if ($ffCommunity eq "friedrichshafen"){
+        $ffCFn = $ffCFn + 1;
+    }
+    if ($ffCommunity eq "ueberlingen"){
+        $ffCU = $ffCU + 1;
+    }
+    if ($ffCommunity eq "tettnang"){
+        $ffCT = $ffCT + 1;
+    }
     $html_ffbsee .= "</tr>\n";
 }
 
@@ -159,7 +177,22 @@ my $ffNodeGeoP = 100 / int($ffNodesInsg) * int($ffNodeGeo);
 my $ffNodeGeoPS = int(100 * $ffNodeGeoP + 0.5 ) / 100;
 $html_ffbsee .= "<td>$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
 my $ffNodeFWP = int(100 * 100 / int($ffNodesInsg) * int($ffNodeFW) + 0.5) / 100;
-$html_ffbsee .= "<td>$ffNodeFWP<br/>mit $firmware</td>\n";
+$html_ffbsee .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
+my $ffHw = int(100 * 100 / int($ffNodesInsg) * int($ffHwP) + 0.5) / 100;
+$html_ffbsee .= "<td>$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
+$html_ffbsee .= "<td>";
+if ($ffCB > 0){
+    $html_ffbsee .= "$ffCB bodensee<br/>";
+}
+if ($ffCFn > 0){
+    $html_ffbsee .= "$ffCFn friedrichshafen<br/>";
+}
+if ($ffCU > 0){
+    $html_ffbsee .= "$ffCU ueberlingen";
+}
+if ($ffCT > 0){
+    $html_ffbsee .= "$ffCT tettnang";
+}
 $html_ffbsee .= "\n</tr>\n</tfoot>\n";
 #
 #	EOFFNodes
