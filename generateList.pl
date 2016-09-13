@@ -80,6 +80,7 @@ $html_ffbsee .= "  </head>\n\n  <body>\n";
 $html_ffbsee .= "<ul>";
 $html_ffbsee .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
 $html_ffbsee .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
+$html_ffbsee .= "<li><a href=\"https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10\">freifunk-karte.de</a></li>";
 $html_ffbsee .= "</ul>";
 our $ffDate = "<!--";
 our $ffHwP = 0;
