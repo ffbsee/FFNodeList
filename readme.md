@@ -28,6 +28,8 @@ Currently implemented sort criteria are:
 Rows can be skipped using class *skip-sort*.
 *thead* and *tfoot* elements are always skipped.
 
+The Perl Script generate an index.html page which display the freifunk nodes from the meshviewer JSON file.
+
 
 MIT License
 
