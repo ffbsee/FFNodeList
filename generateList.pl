@@ -90,7 +90,7 @@ $ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
 $html_ffbsee .= "\n<div class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
-$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Clients:</th>\n";
+$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Uptime:</th>\n          <th class=\"float-sort\">Clients:</th>\n";
 $html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
 $html_ffbsee .= "          <th class=\"str-sort\">Firmware:</th>\n           <th class=\"str-sort\">Hardware:</th>\n           <th class=\"str-sort\">Community:</th>\n";
 $html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n";
@@ -102,6 +102,7 @@ my $hashref_ffbsee = $ffbsee_json->{"nodes"};
 our $ffCB = 0;
 our $ffCFn = 0;
 our $ffCU = 0;
+our $ffUptime;
 our $ffCT = 0;
 for my $ffkey (keys %{$hashref_ffbsee}) {
     if ($runXTime == 1){
@@ -114,7 +115,7 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">$ffNodeName</a></td>";
     my $ffNodeOnline = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"flags"}->{"online"};
     my $ffNodeURL;
-    if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"})){
+    if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1])){
         $ffNodeURL .= " href=\"http://[";
         $ffNodeURL .= $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1];
         $ffNodeURL .= "]/\"";
@@ -127,6 +128,12 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     else {
         $html_ffbsee .= "<td class=\"offline\"><a>offline</a></td>";
     }
+    if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
+        if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"uptime"})){
+            $ffUptime = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"uptime"};
+        } else {$ffUptime = " ";}
+    } else {$ffUptime = " ";}
+    $html_ffbsee .= "<td>$ffUptime</td>"; 
     $ffNodesInsg = $ffNodesInsg + 1;
     my $ffClients = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"clients"};
     $html_ffbsee .= "<td>$ffClients</td>";
