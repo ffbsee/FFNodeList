@@ -10,6 +10,7 @@ use LWP::Simple;
 
 
 our $json_source = "/var/www/meshviewer/nodes.json";
+our $json_graph = "/var/www/meshviewer/graph.json";
 our $export = "/var/www/FFNodeList/index.html";
 our $html_ffbsee;
 our $ffcommunity = "Freifunk Bodensee";
@@ -32,7 +33,10 @@ while (my $arg = shift @ARGV) {
 	
 }
 if (not($debug)){sleep 0.42;}
-open(DATEI, $json_source) or die "Datei wurde nicht gefunden\n";
+#
+#  nodes.json
+#
+open(DATEI, $json_source) or die "Datei nodes.json wurde nicht gefunden\n";
     my $daten;
     while(<DATEI>){
          $daten = $daten.$_;
@@ -41,6 +45,45 @@ close (DATEI);
 our $json_text = $daten;
 our $json = JSON->new->utf8; #force UTF8 Encoding
 our $ffbsee_json = $json->decode( $json_text ); #decode nodes.json
+#
+#  graph.json
+#
+open(DATEI, $json_graph) or die "Datei graph.json wurde nicht gefunden\n";
+    my $graphdaten;
+    while(<DATEI>){                                                                                                                                 
+         $graphdaten = $graphdaten.$_; 
+    }
+close (DATEI);
+our $json_text_graph = $graphdaten;
+our $jsongraph = JSON->new->utf8; #force UTF8 Encoding
+our $ffbsee_graph = $jsongraph->decode( $json_text_graph ); #decode graph.json
+#
+# Meshing auswertung (graph.json)
+#  -> VPN
+#
+our %graph;
+our $ffmeshNr = 0;
+our @ffmeshGraph = @{ $ffbsee_graph->{"batadv"}->{"links"} };
+foreach my $ffmesh ( @ffmeshGraph ) {
+    if($debug){print $ffmesh; print "  ".$ffmeshNr."\n";}
+    my $ffmeshTarget = $ffmesh->{"target"};
+    if (not defined($graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshTarget]->{"node_id"}})){
+        $graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshTarget]->{"node_id"}} = 1;
+    }
+    else {$graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshTarget]->{"node_id"}} ++;}
+    if($debug){print $graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshTarget]->{"node_id"}}."\n";}
+
+    my $ffmeshSource = $ffmesh->{"source"};                                                                                                         
+    if (not defined($graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshSource]->{"node_id"}})){                                                   
+        $graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshSource]->{"node_id"}} = 1;                                                             
+    }                                                                                                                                               
+    else {$graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshSource]->{"node_id"}} ++;} 
+    
+    if($debug){$ffmeshNr = $ffmeshNr + 1;}
+}
+#
+#  Firmware
+#
 our $ffNodesOnline = 0;
 our $ffNodesInsg = 0;
 our $ffClientInsg = 0;
@@ -90,7 +133,8 @@ $ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
 $html_ffbsee .= "\n<div class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
-$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Uptime: (Stunden)</th>\n          <th class=\"float-sort\">Clients:</th>\n";
+$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Uptime: (Stunden)</th>\n";
+$html_ffbsee .= "        <th class=\"float-sort\">Verbindungen</th>\n          <th class=\"float-sort\">Clients:</th>\n";
 $html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
 $html_ffbsee .= "          <th class=\"str-sort\">Firmware:</th>\n           <th class=\"str-sort\">Hardware:</th>\n           <th class=\"str-sort\">Community:</th>\n";
 $html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n";
@@ -137,9 +181,16 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
         } else {$ffUptime = " ";}
     } else {$ffUptime = " ";}
     $html_ffbsee .= "<td>$ffUptime</td>"; 
+    
+    if (not defined($graph{$ffkey})){
+        $graph{$ffkey} = 0;
+    }
+    $html_ffbsee .= "<td>$graph{$ffkey}</td>";
+
     $ffNodesInsg = $ffNodesInsg + 1;
     my $ffClients = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"clients"};
     $html_ffbsee .= "<td>$ffClients</td>";
+    
     $ffClientInsg = $ffClientInsg + $ffClients;
 #    $html_ffbsee .= "<td></td>"; #WLAN Links
 #    $html_ffbsee .= "<td></td>"; #VPN
