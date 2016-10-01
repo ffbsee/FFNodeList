@@ -90,7 +90,7 @@ $ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
 $html_ffbsee .= "\n<div class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
-$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Uptime:</th>\n          <th class=\"float-sort\">Clients:</th>\n";
+$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Uptime: (Stunden)</th>\n          <th class=\"float-sort\">Clients:</th>\n";
 $html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
 $html_ffbsee .= "          <th class=\"str-sort\">Firmware:</th>\n           <th class=\"str-sort\">Hardware:</th>\n           <th class=\"str-sort\">Community:</th>\n";
 $html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n";
@@ -103,6 +103,7 @@ our $ffCB = 0;
 our $ffCFn = 0;
 our $ffCU = 0;
 our $ffUptime;
+our $ffUptimeTage;
 our $ffCT = 0;
 for my $ffkey (keys %{$hashref_ffbsee}) {
     if ($runXTime == 1){
@@ -131,6 +132,8 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
         if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"uptime"})){
             $ffUptime = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"uptime"};
+            $ffUptime = $ffUptime / 3600 * 10;
+            $ffUptime = int($ffUptime)/10;
         } else {$ffUptime = " ";}
     } else {$ffUptime = " ";}
     $html_ffbsee .= "<td>$ffUptime</td>"; 
