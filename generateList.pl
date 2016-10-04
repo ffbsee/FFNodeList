@@ -64,6 +64,7 @@ our $ffbsee_graph = $jsongraph->decode( $json_text_graph ); #decode graph.json
 our %graph;
 our $ffmeshNr = 0;
 our @ffmeshGraph = @{ $ffbsee_graph->{"batadv"}->{"links"} };
+our $ffVerbindungen = 0;
 foreach my $ffmesh ( @ffmeshGraph ) {
     if($debug){print $ffmesh; print "  ".$ffmeshNr."\n";}
     my $ffmeshTarget = $ffmesh->{"target"};
@@ -78,7 +79,7 @@ foreach my $ffmesh ( @ffmeshGraph ) {
         $graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshSource]->{"node_id"}} = 1;                                                             
     }                                                                                                                                               
     else {$graph{$ffbsee_graph->{"batadv"}->{"nodes"}->[$ffmeshSource]->{"node_id"}} ++;} 
-    
+    $ffVerbindungen ++;
     if($debug){$ffmeshNr = $ffmeshNr + 1;}
 }
 #
@@ -124,6 +125,7 @@ $html_ffbsee .= "<ul>";
 $html_ffbsee .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
 $html_ffbsee .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
 $html_ffbsee .= "<li><a href=\"https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10\">freifunk-karte.de</a></li>";
+$html_ffbsee .= "<li><a style=\"cursor: pointer;\" onclick=\"hide()\">Erweiterte Ansicht</a></li>";
 $html_ffbsee .= "</ul>";
 our $ffDate = "<!--";
 our $ffHwP = 0;
@@ -131,10 +133,10 @@ $ffDate .= $ffbsee_json->{"meta"}->{"timestamp"};
 $ffDate .= " <br/> -->";
 $ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
-$html_ffbsee .= "\n<div class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
+$html_ffbsee .= "\n<div id=\"adv\" class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
 $html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
-$html_ffbsee .= "<br/><br/>          <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\">Uptime: (Stunden)</th>\n";
-$html_ffbsee .= "        <th class=\"float-sort\">Verbindungen</th>\n          <th class=\"float-sort\">Clients:</th>\n";
+$html_ffbsee .= "     <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\" id=\"adv\">Uptime: (Stunden)</th>\n";
+$html_ffbsee .= "        <th class=\"float-sort\" style=\"adv\">Verbindungen</th>\n        <th id=\"adv\" class=\"float-sort\">Clients:</th>\n";
 $html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
 $html_ffbsee .= "          <th class=\"str-sort\">Firmware:</th>\n           <th class=\"str-sort\">Hardware:</th>\n           <th class=\"str-sort\">Community:</th>\n";
 $html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n";
@@ -234,14 +236,16 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
 }
 
 $html_ffbsee .= "<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
+$html_ffbsee .= "<td id=\"adv\"></td>"; #uptime
+$html_ffbsee .= "<td id=\"adv\">$ffVerbindungen<br/>Verbindungen</td>"; #verbindungen
 $html_ffbsee .= "<td>$ffClientInsg<br/>Clients online</td>\n";
 my $ffNodeGeoP = 100 / int($ffNodesInsg) * int($ffNodeGeo);
 my $ffNodeGeoPS = int(100 * $ffNodeGeoP + 0.5 ) / 100;
-$html_ffbsee .= "<td>$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
+$html_ffbsee .= "<td id=\"adv\">$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
 my $ffNodeFWP = int(100 * 100 / int($ffNodesInsg) * int($ffNodeFW) + 0.5) / 100;
 $html_ffbsee .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
 my $ffHw = int(100 * 100 / int($ffNodesInsg) * int($ffHwP) + 0.5) / 100;
-$html_ffbsee .= "<td>$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
+$html_ffbsee .= "<td id=\"adv\">$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
 $html_ffbsee .= "<td>";
 if ($ffCB > 0){
     $html_ffbsee .= "$ffCB bodensee<br/>";
@@ -259,7 +263,9 @@ $html_ffbsee .= "\n</tr>\n</tfoot>\n";
 #
 #	EOFFNodes
 #
-$html_ffbsee .= "\n        </tbody>\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n</body>\n</html>\n";
+$html_ffbsee .= "\n        </tbody>\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
+$html_ffbsee .="<script>\nfunction hide() {\n    var x = document.getElementById('advt');\n    if (x.style.display === 'none') {\n        x.style.display = 'block';\n    } else {\n        x.style.display = 'none';\n    }\n}\n</script>\n\n";
+$html_ffbsee .= "\n</body>\n</html>\n";
 #	Öffne eine Datei und generiere das JSON
 
 open (DATEI, "> $export") or die $!;
