@@ -11,14 +11,16 @@ use LWP::Simple;
 
 our $json_source = "/var/www/meshviewer/nodes.json";
 our $json_graph = "/var/www/meshviewer/graph.json";
-our $export = "/var/www/FFNodeList/index.html";
+our $export = "/var/www/FFNodeList/liste.html";
 our $html_ffbsee;
+our $export_minimal = "/var/www/FFNodeList/index.html";
+our $html_minimal;
 our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
 our $fftitle = "Freifunk Node Liste";
 our $ffSupernode = `hostname`;
 our $debug;
-
+our $community_freifunk_karte = "https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10";
 while (my $arg = shift @ARGV) {
     #Komandozeilenargumente: #print "$arg\n";
     if (($arg eq "-h") or ($arg eq "h") or ($arg eq "--help")){
@@ -101,48 +103,60 @@ our $ffC = 0;
 #
 #	Generiert das HTML:
 #
-$html_ffbsee .= "<!doctype html>\n<html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
-$html_ffbsee .= "\n";
-$html_ffbsee .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">";
-$html_ffbsee .= "\n    <title>$fftitle</title>\n";
+our $html_head;
+$html_head .= "<!doctype html>\n<html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
+$html_head .= "\n";
+$html_head .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">";
+$html_head .= "\n    <title>$fftitle</title>\n";
 #	CSS
-$html_ffbsee .= "\n    <style>\n        table {\n            width: 100%;\n        }\n\n        th {\n            cursor: default;\n        }\n\n        thead th:hover {\n            text-decoration: underline;\n        }\n";
-$html_ffbsee .= ".online {\nbackground-color: rgba(128, 255, 128, 0.4);\n}\n.offline {\nbackground-color: rgba(255, 128, 128, 0.07)\n}\n";
-$html_ffbsee .= "\n        .amount {\n            text-align: right;\n        }\n\n        .skip-sort {\n            background-color: black;\n            color: white;\n        }\n";
-$html_ffbsee .= "ul {\n    list-style-type: none;\n    margin: -5px;\n    padding: 0;\n    overflow: hidden;\n    background-color: #333;\n}\n\nli {\n    float: left;\n}\n\nli a {\n    display: block;\n    color: white;\n    text-align: center;\n    padding: 14px 16px;\n    text-decoration: none;\n}\n\nli a:hover {\n    background-color: #111;\n}\n";
-$html_ffbsee .= ".g2  {\noverflow: hidden;\nmargin: auto\noverflow-x: hidden;\nwidth: 50%;\nmargin-left: 50%;\ntext-align; right;\nmin-height: 16em;\n margin-top: -8em;\nmargin-bottom: -8em;\n\n}\n";
-$html_ffbsee .= "\n.generated {\noverflow: hidden;\noverflow-x: hidden;\nbackground-color: rgba(128, 255, 172, 0.4);\n min-width: 15em;\ntext-align: center;\nmargin: auto;\nmargin-right: -20em;\nmargin-top: 6em;\npadding: 0.4em;\npadding-left: 23em;\npadding-right: 23em;\n    -webkit-transform: rotate(20deg);\n    -moz-transform: rotate(20deg);\n    -o-transform: rotate(20deg);\n    writing-mode: lr-tb;\n}\n";
-$html_ffbsee .= "thead tr {\nbackground: rgba(0, 255, 255, 0.7);\npadding-top: 1em;\npadding-bottom: 0.5em;\n}\n";
-$html_ffbsee .= "tfoot tr {\nbackground: rgba(0, 255, 255, 0.7);\npadding-top: 1em;\npadding-bottom: 0.5em;\ntext-align: center;\n}\n";
-$html_ffbsee .= "tfoot {\ntext-align: center;\n}\n";
-$html_ffbsee .= "\n        .odd {\n       background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
+$html_head .= "\n    <style>\n        table {\n            width: 100%;\n        }\n\n        th {\n            cursor: default;\n        }\n\n        thead th:hover {\n            text-decoration: underline;\n        }\n";
+$html_head .= "        .online {\n            background-color: rgba(128, 255, 128, 0.4);\n        }\n        .offline {\n            background-color: rgba(255, 128, 128, 0.07)\n        }\n";
+$html_head .= "\n        .amount {\n            text-align: right;\n        }\n\n        .skip-sort {\n            background-color: black;\n            color: white;\n        }\n\n";
+$html_head .= "        ul {\n            list-style-type: none;\n            margin: -5px;\n            padding: 0;\n            overflow: hidden;\n            background-color: #333;\n        }\n\n        li {\n            float: left;\n        }\n\n        li a {\n            display: block;\n            color: white;\n            text-align: center;\n            padding: 14px 16px;\n            text-decoration: none;\n        }\n\n        li a:hover {\n            background-color: #111;\n         }\n";
+$html_head .= "        .g2  {\n            overflow: hidden;\n            margin: auto\n            overflow-x: hidden;\n            width: 50%;\n            margin-left: 50%;\n            text-align; right;\n            min-height: 16em;\n            margin-top: -8em;\n            margin-bottom: -8em;\n        }\n";
+$html_ffbsee .= "\n        .generated {\n            overflow: hidden;\n             overflow-x: hidden;\n            background-color: rgba(128, 255, 172, 0.4);\n             min-width: 15em;\n            text-align: center;\n            margin: auto;\n            margin-right: -20em;\n            margin-top: 6em;\n            padding: 0.4em;\n              padding-left: 23em;\n            padding-right: 23em;\n            -webkit-transform: rotate(20deg);\n            -moz-transform: rotate(20deg);\n             -o-transform: rotate(20deg);\n            writing-mode: lr-tb;\n        }\n";
+$html_head .= "        thead tr {\n            background: rgba(0, 255, 255, 0.7);\n            padding-top: 1em;\n            padding-bottom: 0.5em;\n        }\n";
+$html_head .= "        tfoot tr {\n            background: rgba(0, 255, 255, 0.7);\n            padding-top: 1em;\n            padding-bottom: 0.5em;\n            text-align: center;\n        }\n";
+$html_head .= "\n        tfoot {\n            text-align: center;\n        }\n";
+$html_head .= "\n        .odd {\n            background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
+#
+#
+$html_ffbsee .= $html_head;
+$html_minimal .= $html_head;
 
 #
 #	Generate FFNodes
 #
-$html_ffbsee .= "  </head>\n\n  <body>\n";
-$html_ffbsee .= "<ul>";
-$html_ffbsee .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
-$html_ffbsee .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
-$html_ffbsee .= "<li><a href=\"https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10\">freifunk-karte.de</a></li>";
-$html_ffbsee .= "<li><a style=\"cursor: pointer;\" onclick=\"hide()\">Erweiterte Ansicht</a></li>";
+our $html_body;
+$html_body .= "  </head>\n\n  <body>\n";
+$html_body .= "<ul>";
+$html_body .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
+$html_body .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
+$html_body .= "<li><a href=\"$community_freifunk_karte\">freifunk-karte.de</a></li>";
+$html_ffbsee .= $html_body;
+$html_minimal .= $html_body;
+$html_ffbsee .= "<li><a href=\"https://$ffSupernode/FFNodeList/index.html\">Minimale Ansicht</a></li>";
+$html_minimal .= "<li><a href=\"https://$ffSupernode/FFNodeList/liste.html\">Erweiterte Ansicht</a></li>";
 $html_ffbsee .= "</ul>";
+$html_minimal .= "</ul>";
 our $ffDate = "<!--";
 our $ffHwP = 0;
 $ffDate .= $ffbsee_json->{"meta"}->{"timestamp"};
 $ffDate .= " <br/> -->";
 $ffDate .= `date`;
 $html_ffbsee .= "    <h1>$fftitle</h1>\n";
-$html_ffbsee .= "\n<div id=\"adv\" class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
-$html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n";
-$html_ffbsee .= "     <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n           <th class=\"float-sort\" id=\"adv\">Uptime: (Stunden)</th>\n";
-$html_ffbsee .= "        <th class=\"float-sort\" style=\"adv\">Verbindungen</th>\n        <th id=\"adv\" class=\"float-sort\">Clients:</th>\n";
-$html_ffbsee .= "<!--          <th class=\"float-sort\">WLAN Links:</th>\n           <th class=\"float-sort\">VPN:</th>-->\n           <th class=\"str-sort\">Geo:</th>\n";
+$html_minimal .= "    <h1>$fftitle</h1>\n";
+$html_ffbsee .= "\n<div class=\"g2\"><div class=\"generated\"><a>Aktualisiert: $ffDate</a></div></div>\n";
+$html_ffbsee .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n     <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n";
+$html_minimal .= "\n    <table class=\"sortable\">\n      <thead>\n        <tr>\n     <th class=\"str-sort\">Name:</th>\n           <th class=\"str-sort\">Status:</th>\n";
+$html_ffbsee .= "        <th class=\"float-sort\">Uptime: (Stunden)</th>\n        <th class=\"float-sort\" >Verbindungen</th>\n";
+$html_ffbsee .= "        <th class=\"float-sort\">Clients:</th>\n";
+$html_minimal .= "        <th class=\"float-sort\">Clients:</th>\n";
+$html_ffbsee .= "         <th class=\"float-sort\">VPN:</th>\n           <th class=\"str-sort\">Geo:</th>\n";
+$html_minimal .= "          <th class=\"str-sort\">Firmware:</th>\n";
 $html_ffbsee .= "          <th class=\"str-sort\">Firmware:</th>\n           <th class=\"str-sort\">Hardware:</th>\n           <th class=\"str-sort\">Community:</th>\n";
-$html_ffbsee .= "        </tr>\n      </thead>\n";#      <tfoot>\n        <tr>\n";
-  #$html_ffbsee .= "          <th>Name</th>\n          <th>name</th>\n          <th>amount</th>\n";
-  #$html_ffbsee .= "        </tr>\n      </tfoot>";
-$html_ffbsee .= "\n       <tbody>\n";
+$html_ffbsee .= "        </tr>\n      </thead>\n\n       <tbody>\n";
+$html_minimal .= "        </tr>\n      </thead>\n\n       <tbody>\n";
 my $runXTime = 1;
 my $hashref_ffbsee = $ffbsee_json->{"nodes"};
 our $ffCB = 0;
@@ -160,6 +174,7 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     my $ffNodeName = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hostname"};
     my $ffNodeLnk = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"node_id"};
     $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">$ffNodeName</a></td>";
+    $html_minimal .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">$ffNodeName</a></td>";
     my $ffNodeOnline = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"flags"}->{"online"};
     my $ffNodeURL;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1])){
@@ -170,10 +185,12 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     else { $ffNodeURL = "";}
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
         $html_ffbsee .= "<td class=\"online\"><a $ffNodeURL>online</a></td>";
+        $html_minimal .= "<td class=\"online\"><a $ffNodeURL>online</a></td>";
         $ffNodesOnline = int($ffNodesOnline) + 1;
     }
     else {
         $html_ffbsee .= "<td class=\"offline\"><a>offline</a></td>";
+        $html_minimal .= "<td class=\"offline\"><a>offline</a></td>";
     }
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
         if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"uptime"})){
@@ -192,10 +209,14 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     $ffNodesInsg = $ffNodesInsg + 1;
     my $ffClients = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"clients"};
     $html_ffbsee .= "<td>$ffClients</td>";
-    
+    $html_minimal .= "<td>$ffClients</td>";
     $ffClientInsg = $ffClientInsg + $ffClients;
-#    $html_ffbsee .= "<td></td>"; #WLAN Links
-#    $html_ffbsee .= "<td></td>"; #VPN
+
+
+    $html_ffbsee .= "<td></td>"; #VPN
+
+
+
     my $ffNodeVPN;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"location"})){
         $ffNodeVPN = "ja";
@@ -210,6 +231,7 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
         }
     } else {$ffNodeFirmware = "";}
     $html_ffbsee .= "<td>$ffNodeFirmware</td>";
+    $html_minimal .= "<td>$ffNodeFirmware</td>";
 
     my $ffHardware;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hardware"}->{"model"})){
@@ -233,17 +255,21 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
         $ffCT = $ffCT + 1;
     }
     $html_ffbsee .= "</tr>\n";
+    $html_minimal .= "<tr>\n";
 }
 
 $html_ffbsee .= "<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
+$html_minimal .= "<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
 $html_ffbsee .= "<td id=\"adv\"></td>"; #uptime
 $html_ffbsee .= "<td id=\"adv\">$ffVerbindungen<br/>Verbindungen</td>"; #verbindungen
 $html_ffbsee .= "<td>$ffClientInsg<br/>Clients online</td>\n";
+$html_minimal .= "<td>$ffClientInsg<br/>Clients online</td>\n";
 my $ffNodeGeoP = 100 / int($ffNodesInsg) * int($ffNodeGeo);
 my $ffNodeGeoPS = int(100 * $ffNodeGeoP + 0.5 ) / 100;
 $html_ffbsee .= "<td id=\"adv\">$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
 my $ffNodeFWP = int(100 * 100 / int($ffNodesInsg) * int($ffNodeFW) + 0.5) / 100;
 $html_ffbsee .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
+$html_minimal .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
 my $ffHw = int(100 * 100 / int($ffNodesInsg) * int($ffHwP) + 0.5) / 100;
 $html_ffbsee .= "<td id=\"adv\">$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
 $html_ffbsee .= "<td>";
@@ -259,17 +285,23 @@ if ($ffCU > 0){
 if ($ffCT > 0){
     $html_ffbsee .= "$ffCT tettnang";
 }
-$html_ffbsee .= "\n</tr>\n</tfoot>\n";
+our $html_footer;
+$html_footer .= "\n</tr>\n</tfoot>\n";
 #
 #	EOFFNodes
 #
-$html_ffbsee .= "\n        </tbody>\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
-$html_ffbsee .="<script>\nfunction hide() {\n    var x = document.getElementById('advt');\n    if (x.style.display === 'none') {\n        x.style.display = 'block';\n    } else {\n        x.style.display = 'none';\n    }\n}\n</script>\n\n";
-$html_ffbsee .= "\n</body>\n</html>\n";
+$html_footer .= "\n        </tbody>\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
+$html_footer .= "\n</body>\n</html>\n";
+$html_ffbsee .= $html_footer;
+$html_minimal .= $html_footer;
 #	Öffne eine Datei und generiere das JSON
 
 open (DATEI, "> $export") or die $!;
     print DATEI $html_ffbsee;
    
 close (DATEI);
+open (DATEI, "> $export_minimal") or die $!;
+    print DATEI $html_minimal;
+
+close DATEI;
 print"FFListe wurde erzeugt!\n";
