@@ -4,10 +4,13 @@ use warnings;
 use JSON;
 use utf8;
 use LWP::Simple;
+use HTML::Entities;
+
 
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
-
+our     @author = {"L3D", "Freifunk Bodensee"};
+our     $lizenz = "CC-BY-NC";
 
 our $json_source = "/var/www/meshviewer/nodes.json";
 our $json_graph = "/var/www/meshviewer/graph.json";
@@ -64,7 +67,8 @@ our $ffbsee_graph = $jsongraph->decode( $json_text_graph ); #decode graph.json
 # Meshing auswertung (graph.json)
 #  -> VPN
 #
-our %graph, %vpn;
+our %graph;
+our %vpn;
 our $ffmeshNr = 0;
 our @ffmeshGraph = @{ $ffbsee_graph->{"batadv"}->{"links"} };
 our $ffVerbindungen = 0;
@@ -107,7 +111,7 @@ our $ffC = 0;
 our $html_head;
 $html_head .= "<!doctype html>\n<html lang=\"de\">\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
 $html_head .= "\n";
-$html_head .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">";
+$html_head .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
 $html_head .= "\n    <title>$fftitle</title>\n";
 #	CSS
 $html_head .= "\n    <style>\n        table {\n            width: 100%;\n        }\n\n        th {\n            cursor: default;\n        }\n\n        thead th:hover {\n            text-decoration: underline;\n        }\n";
@@ -175,8 +179,8 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     if ($debug) { print "$ffkey\n"; }
     my $ffNodeName = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hostname"};
     my $ffNodeLnk = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"node_id"};
-    $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">$ffNodeName</a></td>";
-    $html_minimal .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">$ffNodeName</a></td>";
+    $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
+    $html_minimal .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
     my $ffNodeOnline = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"flags"}->{"online"};
     my $ffNodeURL;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1])){
@@ -257,23 +261,24 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
         $ffCT = $ffCT + 1;
     }
     $html_ffbsee .= "</tr>\n";
-    $html_minimal .= "<tr>\n";
+    $html_minimal .= "</tr>\n";
 }
 
-$html_ffbsee .= "<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
+$html_ffbsee .= "</tbody>\n<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
 $html_minimal .= "<tfoot>\n<tr>\n<td>$ffNodesOnline von $ffNodesInsg Freifunk Nodes sind derzeit online</td>\n<td></td>\n";
-$html_ffbsee .= "<td id=\"adv\"></td>"; #uptime
-$html_ffbsee .= "<td id=\"adv\">$ffVerbindungen<br/>Verbindungen</td>"; #verbindungen
+$html_ffbsee .= "<td></td>"; #uptime
+$html_ffbsee .= "<td>$ffVerbindungen<br/>Verbindungen</td>"; #verbindungen
 $html_ffbsee .= "<td>$ffClientInsg<br/>Clients online</td>\n";
 $html_minimal .= "<td>$ffClientInsg<br/>Clients online</td>\n";
+$html_ffbsee .= "<td></td>\n";
 my $ffNodeGeoP = 100 / int($ffNodesInsg) * int($ffNodeGeo);
 my $ffNodeGeoPS = int(100 * $ffNodeGeoP + 0.5 ) / 100;
-$html_ffbsee .= "<td id=\"adv\">$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
+$html_ffbsee .= "<td>$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
 my $ffNodeFWP = int(100 * 100 / int($ffNodesInsg) * int($ffNodeFW) + 0.5) / 100;
 $html_ffbsee .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
 $html_minimal .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
 my $ffHw = int(100 * 100 / int($ffNodesInsg) * int($ffHwP) + 0.5) / 100;
-$html_ffbsee .= "<td id=\"adv\">$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
+$html_ffbsee .= "<td>$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
 $html_ffbsee .= "<td>";
 if ($ffCB > 0){
     $html_ffbsee .= "$ffCB bodensee<br/>";
@@ -288,11 +293,11 @@ if ($ffCT > 0){
     $html_ffbsee .= "$ffCT tettnang";
 }
 our $html_footer;
-$html_footer .= "\n</tr>\n</tfoot>\n";
+$html_footer .= "\n</tr>\n</tfoot>";
 #
 #	EOFFNodes
 #
-$html_footer .= "\n        </tbody>\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
+$html_footer .= "\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
 $html_footer .= "\n</body>\n</html>\n";
 $html_ffbsee .= $html_footer;
 $html_minimal .= $html_footer;
