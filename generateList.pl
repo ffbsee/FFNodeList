@@ -19,6 +19,7 @@ our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
 our $fftitle = "Freifunk Node Liste";
 our $ffSupernode = `hostname`;
+chomp $ffSupernode;
 our $debug;
 our $community_freifunk_karte = "https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10";
 while (my $arg = shift @ARGV) {
@@ -63,7 +64,7 @@ our $ffbsee_graph = $jsongraph->decode( $json_text_graph ); #decode graph.json
 # Meshing auswertung (graph.json)
 #  -> VPN
 #
-our %graph;
+our %graph, %vpn;
 our $ffmeshNr = 0;
 our @ffmeshGraph = @{ $ffbsee_graph->{"batadv"}->{"links"} };
 our $ffVerbindungen = 0;
@@ -104,7 +105,7 @@ our $ffC = 0;
 #	Generiert das HTML:
 #
 our $html_head;
-$html_head .= "<!doctype html>\n<html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
+$html_head .= "<!doctype html>\n<html lang=\"de\">\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
 $html_head .= "\n";
 $html_head .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">";
 $html_head .= "\n    <title>$fftitle</title>\n";
@@ -114,7 +115,7 @@ $html_head .= "        .online {\n            background-color: rgba(128, 255, 1
 $html_head .= "\n        .amount {\n            text-align: right;\n        }\n\n        .skip-sort {\n            background-color: black;\n            color: white;\n        }\n\n";
 $html_head .= "        ul {\n            list-style-type: none;\n            margin: -5px;\n            padding: 0;\n            overflow: hidden;\n            background-color: #333;\n        }\n\n        li {\n            float: left;\n        }\n\n        li a {\n            display: block;\n            color: white;\n            text-align: center;\n            padding: 14px 16px;\n            text-decoration: none;\n        }\n\n        li a:hover {\n            background-color: #111;\n         }\n";
 $html_head .= "        .g2  {\n            overflow: hidden;\n            margin: auto\n            overflow-x: hidden;\n            width: 50%;\n            margin-left: 50%;\n            text-align; right;\n            min-height: 16em;\n            margin-top: -8em;\n            margin-bottom: -8em;\n        }\n";
-$html_ffbsee .= "\n        .generated {\n            overflow: hidden;\n             overflow-x: hidden;\n            background-color: rgba(128, 255, 172, 0.4);\n             min-width: 15em;\n            text-align: center;\n            margin: auto;\n            margin-right: -20em;\n            margin-top: 6em;\n            padding: 0.4em;\n              padding-left: 23em;\n            padding-right: 23em;\n            -webkit-transform: rotate(20deg);\n            -moz-transform: rotate(20deg);\n             -o-transform: rotate(20deg);\n            writing-mode: lr-tb;\n        }\n";
+$html_head .= "\n        .generated {\n            overflow: hidden;\n             overflow-x: hidden;\n            background-color: rgba(128, 255, 172, 0.4);\n             min-width: 15em;\n            text-align: center;\n            margin: auto;\n            margin-right: -20em;\n            margin-top: 6em;\n            padding: 0.4em;\n              padding-left: 23em;\n            padding-right: 23em;\n            -webkit-transform: rotate(20deg);\n            -moz-transform: rotate(20deg);\n             -o-transform: rotate(20deg);\n            writing-mode: lr-tb;\n        }\n";
 $html_head .= "        thead tr {\n            background: rgba(0, 255, 255, 0.7);\n            padding-top: 1em;\n            padding-bottom: 0.5em;\n        }\n";
 $html_head .= "        tfoot tr {\n            background: rgba(0, 255, 255, 0.7);\n            padding-top: 1em;\n            padding-bottom: 0.5em;\n            text-align: center;\n        }\n";
 $html_head .= "\n        tfoot {\n            text-align: center;\n        }\n";
@@ -168,8 +169,9 @@ our $ffCT = 0;
 for my $ffkey (keys %{$hashref_ffbsee}) {
     if ($runXTime == 1){
         $runXTime = 0;
+        $html_minimal .= "<tr class=\"even\">";
         $html_ffbsee .= "<tr class=\"even\">";
-    } else { $html_ffbsee .= "<tr class=\"odd\">"; $runXTime = 1; }
+    } else { $html_ffbsee .= "<tr class=\"odd\">"; $html_minimal .= "<tr class=\"odd\">"; $runXTime = 1; }
     if ($debug) { print "$ffkey\n"; }
     my $ffNodeName = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hostname"};
     my $ffNodeLnk = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"node_id"};
