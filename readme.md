@@ -31,9 +31,12 @@ Rows can be skipped using class *skip-sort*.
 ##Freifunk Node List
 The Perl Script generate an index.html and an liste.html. Both Pages display all freifunk nodes from the meshviewer JSON file.
 The index.html file only contains the most important informations. The list.html has a lot more information.
-Please have a look at https://vpn3.ffbsee.de/FFNodeList/liste.html and https://vpn3.ffbsee.de/FFNodeList/index.html .
+Please have a look at [index.html](https://vpn3.ffbsee.de/FFNodeList/liste.html) and [list.html](https://vpn3.ffbsee.de/FFNodeList/index.html).
+More Questions?
+Have a look at the Source code [Source Code](https://raw.githubusercontent.com/ffbsee/FFNodeList/master/generateList.pl) or come to the next [Freifunk Bodensee](https://ffbsee.de) meeting.
 
-MIT License
-
-Copyright 2016, Gregory Vigo Torres
-Edited by FFBSee
+#License:
+sortableTables.js:
+MIT License - Copyright 2016, Gregory Vigo Torres
+generateList.pl:
+CC-BY-NC - Freifunk Bodensee, L3D.
