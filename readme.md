@@ -36,8 +36,11 @@ More Questions?
 Have a look at the Source code [Source Code](https://raw.githubusercontent.com/ffbsee/FFNodeList/master/generateList.pl) or come to the next [Freifunk Bodensee](https://ffbsee.de) meeting.
 
 #License:
-sortableTables.js:
+
+sortableTables.js
+
 MIT License - Copyright 2016, Gregory Vigo Torres
 
-generateList.pl:
+generateList.pl
+
 CC-BY-NC - Freifunk Bodensee, L3D.
