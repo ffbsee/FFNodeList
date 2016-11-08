@@ -4,7 +4,14 @@ A simple Javascript library to make html tables sortable.
 It uses Array.from, which may not be available in your Javascript version. 
 You can find a polyfill at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from#Browser_compatibility).
 
-A Perl Script generate the FF Node List for ffbsee:
+
+##generateList.pl
+
+A simple Perl Script to generate a Freifunk Node List.
+The Script get his informations from the [Meshviewer](https://github.com/ffnord/meshviewer) [1](https://github.com/ffbsee/meshviewer). 
+The Meshviewer jas a few JSON Files and this script use them. Please have a look at the global variables from the script.
+
+#SortableTables
 
 Basic usage for the JavaScript:
 
@@ -34,6 +41,8 @@ The index.html file only contains the most important informations. The list.html
 Please have a look at [index.html](https://vpn3.ffbsee.de/FFNodeList/liste.html) and [list.html](https://vpn3.ffbsee.de/FFNodeList/index.html).
 More Questions?
 Have a look at the Source code [Source Code](https://raw.githubusercontent.com/ffbsee/FFNodeList/master/generateList.pl) or come to the next [Freifunk Bodensee](https://ffbsee.de) meeting.
+Feel free to fork this github repository for your own freifunk community.
+
 
 #License:
 

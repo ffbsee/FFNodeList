@@ -9,7 +9,7 @@ use HTML::Entities;
 
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
-our     @author = {"L3D", "Freifunk Bodensee"};
+our     @author = ("Freifunk Bodensee", "L3D");
 our     $lizenz = "CC-BY-NC";
 
 our $json_source = "/var/www/meshviewer/nodes.json";
@@ -123,7 +123,18 @@ $html_head .= "\n        .generated {\n            overflow: hidden;\n          
 $html_head .= "        thead tr {\n            background: rgba(0, 255, 255, 0.7);\n            padding-top: 1em;\n            padding-bottom: 0.5em;\n        }\n";
 $html_head .= "        tfoot tr {\n            background: rgba(0, 255, 255, 0.7);\n            padding-top: 1em;\n            padding-bottom: 0.5em;\n            text-align: center;\n        }\n";
 $html_head .= "\n        tfoot {\n            text-align: center;\n        }\n";
-$html_head .= "\n        .odd {\n            background-color: rgba(180, 200, 255, 0.7);\n        }\n\n    </style>\n";
+my $rgba1 = "rgba(255,255,255,1)";
+my $rgba2 = "rgba(0,142,255,1)";
+my $rgba3 = "rgba(0, 132, 255, 0.12)";
+my $rgba4 = "rgba(255,255,255,0.1)";
+my $rgba6 = "rgba(0, 255, 255, 0.15)";
+my $rgba5 = "rgba(55,255,100,0.2)";
+$html_head .= "\n        tfoot, thead {\n            height: 2.3em;\n            background: no-repeat center center,-moz-linear-gradient(top,    $rgba1, $rgba2);\n            background: no-repeat center center,-webkit-linear-gradient(top, $rgba1, $rgba2);\n            background: no-repeat center center,-o-linear-gradient(top,      $rgba1, $rgba2);\n            background: no-repeat center center,-ms-linear-gradient(top,     $rgba1, $rgba2);\n            background: no-repeat center center,linear-gradient(top,         $rgba1, $rgba2);\n        }\n";
+$html_head .= "\n         thead td:hover, thead th:hover {\n            background: no-repeat center center,-moz-linear-gradient(top,    $rgba2, $rgba1);\n            background: no-repeat center center,-webkit-linear-gradient(top, $rgba2, $rgba1);\n            background: no-repeat center center,-o-linear-gradient(top,      $rgba2, $rgba1);\n            background: no-repeat center center,-ms-linear-gradient(top,     $rgba2, $rgba1);\n            background: no-repeat center center,linear-gradient(top,         $rgba2, $rgba1);\n        }\n";
+$html_head .= "\n        tr{\n            height: 1.8em;\n                 \n            background: no-repeat center center,-moz-linear-gradient(top,    $rgba3, $rgba4);\n            background: no-repeat center center,-webkit-linear-gradient(top, $rgba3, $rgba4);\n            background: no-repeat center center,-o-linear-gradient(top,      $rgba3, $rgba4);\n            background: no-repeat center center,-ms-linear-gradient(top,     $rgba3, $rgba4);\n            background: no-repeat center center,linear-gradient(top,         $rgba3, $rgba4);\n\n            \n        }\n";
+$html_head .= "\n        tr:hover {\n            height: 1.8em;\n                 \n            background: no-repeat center center,-moz-linear-gradient(top,    $rgba5, $rgba6);\n            background: no-repeat center center,-webkit-linear-gradient(top, $rgba5, $rgba6);\n            background: no-repeat center center,-o-linear-gradient(top,      $rgba5, $rgba6);\n            background: no-repeat center center,-ms-linear-gradient(top,     $rgba5, $rgba6);\n            background: no-repeat center center,linear-gradient(top,         $rgba5, $rgba6);\n\n            \n        }\n";    
+#$html_head .= "\n        .odd {\n            background-color: rgba(180, 200, 255, 0.7);\n        }";
+$html_head .= "\n\n    </style>\n";
 #
 #
 $html_ffbsee .= $html_head;
@@ -298,7 +309,8 @@ $html_footer .= "\n</tr>\n</tfoot>";
 #	EOFFNodes
 #
 $html_footer .= "\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
-$html_footer .= "\n</body>\n</html>\n";
+$html_footer .= "\n</body>\n";
+$html_footer .= "<br/>\n<div style=\"opacity: 0.42; margin-left: auto; margin-right: auto; text-align: center; color: #5eba5e;\">\n<a>Entwickelt von $author[0]\n<br/>\nLizenz: $lizenz</a>\n</div>\n</html>\n";
 $html_ffbsee .= $html_footer;
 $html_minimal .= $html_footer;
 #	Öffne eine Datei und generiere das JSON
