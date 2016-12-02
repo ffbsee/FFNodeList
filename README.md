@@ -9,7 +9,8 @@ You can find a polyfill at [MDN](https://developer.mozilla.org/en-US/docs/Web/Ja
 
 A simple Perl Script to generate a Freifunk Node List.
 The Script get his informations from the [Meshviewer](https://github.com/ffnord/meshviewer) [1](https://github.com/ffbsee/meshviewer). 
-The Meshviewer jas a few JSON Files and this script use them. Please have a look at the global variables from the script.
+The Meshviewer has a few JSON Files [²](https://vpn3.ffbsee.de/meshviewer/nodes.json) [³](https://vpn3.ffbsee.de/meshviewer/graph.json) and this script use them. Please have a look at the global variables from the script.
+
 
 #SortableTables
 
