@@ -48,7 +48,7 @@ Feel free to fork this github repository for your own freifunk community.
 Gegebenenfalls braucht man noch das ein oder andere Perl Modul. Installierbar mit:
 
 ```
-cpan install JDON
+cpan install JSON
 cpan install LWP::Simple
 ```
 
