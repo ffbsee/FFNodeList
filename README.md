@@ -44,6 +44,14 @@ More Questions?
 Have a look at the Source code [Source Code](https://raw.githubusercontent.com/ffbsee/FFNodeList/master/generateList.pl) or come to the next [Freifunk Bodensee](https://ffbsee.de) meeting.
 Feel free to fork this github repository for your own freifunk community.
 
+#Installation:
+Gegebenenfalls braucht man noch das ein oder andere Perl Modul. Installierbar mit:
+
+```
+cpan install JDON
+cpan install LWP::Simple
+```
+
 
 #License:
 
