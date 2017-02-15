@@ -98,13 +98,7 @@ our $ffClientInsg = 0;
 our $ffNodeGeo = 0;
 our $ffNodeFW = 0;
 
-my $url = 'http://vpn1.ffbsee.de/freifunk/firmware/autoupdater/manifest';
-my $content = get( $url );
-my @wort = split /\n/, $content;
-$content = $wort[23];
-@wort = split / /, $content;
-our $firmware = $wort[1];
-our $ffC = 0;
+our $firmware = "0.7.0";
 #
 #	Generiert das HTML:
 #
