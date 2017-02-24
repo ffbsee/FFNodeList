@@ -231,12 +231,17 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     }
     $html_ffbsee .= "<td>$graph{$ffkey}</td>";
 
+    # Clients pro FF Node:
     $ffNodesInsg = $ffNodesInsg + 1;
     my $ffClients = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"statistics"}->{"clients"};
-    $html_ffbsee .= "<td>$ffClients</td>";
-    $html_minimal .= "<td>$ffClients</td>";
-    $ffClientInsg = $ffClientInsg + $ffClients;
-
+    if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
+        $html_ffbsee .= "<td>$ffClients</td>";
+        $html_minimal .= "<td>$ffClients</td>";
+        $ffClientInsg = $ffClientInsg + $ffClients;
+    } else {
+        $html_ffbsee .= "<td>-</td>";
+        $html_minimal .= "<td>-</td>";
+    }
 
     $html_ffbsee .= "<td></td>"; #VPN
 
