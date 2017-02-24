@@ -26,6 +26,8 @@ our $ff_statistik = "https://s.ffbsee.de/";
 chomp $ffSupernode;
 our $debug;
 our $community_freifunk_karte = "https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10";
+our $prefix = "fdef:1701:b5ee:42:";
+
 while (my $arg = shift @ARGV) {
     #Komandozeilenargumente: #print "$arg\n";
     if (($arg eq "-h") or ($arg eq "h") or ($arg eq "--help")){
@@ -187,6 +189,9 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     my $ffNodeLnk = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"node_id"};
     $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
     $html_minimal .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
+
+    # Anzeige der IPv6 Adresse des FF Nodes:
+    # Im minnimal:
     my $ffNodeOnline = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"flags"}->{"online"};
     my $ffNodeURL;
     if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[0])){
@@ -199,8 +204,12 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
         $ffNodeURL .= "$ff_url]/\"";
     }
     else { $ffNodeURL = "";}
+    # Anzeige bei Erweitert:
+    our $ff_URL;
+    if ($debug){print "(I) EUI64: ";}
+    $ff_URL = mac2ipv6($ffkey);
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
-        $html_ffbsee .= "<td class=\"online\"><a $ffNodeURL>online</a></td>";
+        $html_ffbsee .= "<td class=\"online\"><a href=\"http://[$ff_URL]/\">online</a></etd>";
         $html_minimal .= "<td class=\"online\"><a $ffNodeURL>online</a></td>";
         $ffNodesOnline = int($ffNodesOnline) + 1;
     }
@@ -286,21 +295,14 @@ my $ffNodeGeoPS = int(100 * $ffNodeGeoP + 0.5 ) / 100;
 $html_ffbsee .= "<td>$ffNodeGeoPS%<br/>mit Koordinaten</td>\n";
 my $ffNodeFWP = int(100 * 100 / int($ffNodesInsg) * int($ffNodeFW) + 0.5) / 100;
 $html_ffbsee .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
-$html_minimal .= "<td>$ffNodeFWP%<br/>mit $firmware</td>\n";
+$html_minimal .= "<td>$ffNodeFWP%<br/>mit $firmware<br/>Firmware</td>\n";
 my $ffHw = int(100 * 100 / int($ffNodesInsg) * int($ffHwP) + 0.5) / 100;
 $html_ffbsee .= "<td>$ffHw% der Nodes<br/>geben Ihre Hardware bekannt</td>";
 $html_ffbsee .= "<td>";
 if ($ffCB > 0){
-    $html_ffbsee .= "$ffCB bodensee<br/>";
-}
-if ($ffCFn > 0){
-    $html_ffbsee .= "$ffCFn friedrichshafen<br/>";
-}
-if ($ffCU > 0){
-    $html_ffbsee .= "$ffCU ueberlingen";
-}
-if ($ffCT > 0){
-    $html_ffbsee .= "$ffCT tettnang";
+    my $t = int(100*(100*$ffCB/$ffNodesInsg))/100;
+    $t = (100 - $t);
+    $html_ffbsee .= $t."%<br/>der Nodes haben Ihre<br/>Community eingestellt";
 }
 our $html_footer;
 $html_footer .= "\n</tr>\n</tfoot>";
@@ -323,3 +325,58 @@ open (DATEI, "> $export_minimal") or die $!;
 
 close DATEI;
 print"FFListe wurde erzeugt!\n";
+
+#Subrotinen:
+
+sub mac2ipv6{
+    my $ipv6addr;
+    my $mac = shift;
+    if (length($mac) eq 12){
+    my @mac = split(//, $mac); #Teilt die Mac in 12 Zeichen auf
+    my $mac1 = $mac[0];
+    $mac1 .= $mac[1];
+    my $mac2 = $mac[2];
+    $mac2 .= $mac[3];
+    my $mac3 = $mac[4];
+    my $mac4 = "FF";
+    my $mac5 = "FE";
+    $mac3 .= $mac[5];
+    my $mac6 = $mac[6];
+    $mac6 .= $mac[7];
+    my $mac7 = $mac[8];
+    $mac7 .= $mac[9];
+    my $mac8 = $mac[10];
+    $mac8 .= $mac[11];
+    # Nun beim ersten oktet noch das richtige bit flippen!
+        
+    if ($debug){ print "binaerer HEX von der Mac: ".$mac1." -> "; }
+    $mac1 = sprintf( "%#b", hex( "F".$mac1 ) );
+    if ($debug){ 
+        print $mac1; 
+        print " --> ";
+    }
+    my @macx = split(//, $mac1);
+    my $xmac = 1;
+    if ($macx[12] eq "1"){
+        $xmac = 0;
+    }
+    my $mac01;
+    my $ii = 0;
+    for my $i (@macx){
+        $ii++;
+        if ($ii eq 13){
+            $mac01 .= $xmac;
+        } elsif ($ii > 6) { 
+            $mac01 .= $i;
+        }
+    }
+    $mac1 = sprintf("%X", oct( "0b$mac01" ));
+    if (length($mac1) eq 1){
+        $mac1 = "0$mac1";
+    }
+    if ($debug){print $mac01." ---> $mac1"; print "\n";}
+#    $ipv6addr = $mac01.$mac2.$mac3.$mac4.$mac5.$mac6.$mac7.$mac8;
+    $ipv6addr = $prefix;
+    $ipv6addr .= $mac1.$mac2.":".$mac3.$mac4.":".$mac5.$mac6.":".$mac7.$mac8;
+    return $ipv6addr;
+} else { print "Fehler!";}}
