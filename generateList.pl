@@ -22,6 +22,7 @@ our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
 our $fftitle = "Freifunk Node Liste";
 our $ffSupernode = `hostname`;
+our $ff_statistik = "https://s.ffbsee.de/";
 chomp $ffSupernode;
 our $debug;
 our $community_freifunk_karte = "https://www.freifunk-karte.de/?lat=47.74579&lng=9.43314&z=10";
@@ -105,10 +106,10 @@ our $firmware = "0.7.0";
 our $html_head;
 $html_head .= "<!doctype html>\n<html lang=\"de\">\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
 $html_head .= "\n";
-$html_head .= "\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
-$html_head .= "\n    <title>$fftitle</title>\n";
+$html_head .= "    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
+$html_head .= "\n    <title>$fftitle</title>\n    <meta name=\"description\" content=\"Eine Liste der Nodes, die bei Freifunk Bodensee aktiv sind. Dargestellt auf dem Supernode $ffSupernode.\">\n";
 #	CSS
-$html_head .= "\n    <style>\n        table {\n            width: 100%;\n        }\n\n        th {\n            cursor: default;\n        }\n\n        thead th:hover {\n            text-decoration: underline;\n        }\n";
+$html_head .= "    <style>\n        table {\n            width: 100%;\n        }\n\n        th {\n            cursor: default;\n        }\n\n        thead th:hover {\n            text-decoration: underline;\n        }\n";
 $html_head .= "        .online {\n            background-color: rgba(128, 255, 128, 0.4);\n        }\n        .offline {\n            background-color: rgba(255, 128, 128, 0.07)\n        }\n";
 $html_head .= "\n        .amount {\n            text-align: right;\n        }\n\n        .skip-sort {\n            background-color: black;\n            color: white;\n        }\n\n";
 $html_head .= "        ul {\n            list-style-type: none;\n            margin: -5px;\n            padding: 0;\n            overflow: hidden;\n            background-color: #333;\n        }\n\n        li {\n            float: left;\n        }\n\n        li a {\n            display: block;\n            color: white;\n            text-align: center;\n            padding: 14px 16px;\n            text-decoration: none;\n        }\n\n        li a:hover {\n            background-color: #111;\n         }\n";
@@ -138,11 +139,11 @@ $html_minimal .= $html_head;
 #	Generate FFNodes
 #
 our $html_body;
-$html_body .= "  </head>\n\n  <body>\n";
+$html_body .= "  </head>\n\n<body>\n";
 $html_body .= "<ul>";
-$html_body .= "<li><a href=\"$ffLink\">$ffcommunity</a></li><li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
-$html_body .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>";
-$html_body .= "<li><a href=\"$community_freifunk_karte\">freifunk-karte.de</a></li>";
+$html_body .= "<li><a href=\"$ffLink\">$ffcommunity</a></li>\n<li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
+$html_body .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>\n";
+$html_body .= "<li><a href=\"$community_freifunk_karte\">freifunk-karte.de</a></li>\n<li><a href=\"$ff_statistik\">Statistik</a></li>\n";
 $html_ffbsee .= $html_body;
 $html_minimal .= $html_body;
 $html_ffbsee .= "<li><a href=\"https://$ffSupernode/FFNodeList/index.html\">Minimale Ansicht</a></li>";
@@ -188,10 +189,14 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     $html_minimal .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
     my $ffNodeOnline = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"flags"}->{"online"};
     my $ffNodeURL;
-    if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1])){
+    if (defined($ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[0])){
         $ffNodeURL .= " href=\"http://[";
-        $ffNodeURL .= $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1];
-        $ffNodeURL .= "]/\"";
+        my $ff_url = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[0];
+        if ($ff_url =~ "fdef:1701:b5ee:42::"){
+            $ff_url = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"network"}->{"addresses"}->[1];
+            if ($debug){print "(I) choose other IPv6 address\n";}
+        }
+        $ffNodeURL .= "$ff_url]/\"";
     }
     else { $ffNodeURL = "";}
     if (($ffNodeOnline eq "true") or ($ffNodeOnline eq 1) or ($ffNodeOnline eq "True")){
@@ -303,8 +308,8 @@ $html_footer .= "\n</tr>\n</tfoot>";
 #	EOFFNodes
 #
 $html_footer .= "\n    </table>\n\n<script src=\"sortableTables.js\"></script>\n\n\n";
-$html_footer .= "\n</body>\n";
-$html_footer .= "<br/>\n<div style=\"opacity: 0.42; margin-left: auto; margin-right: auto; text-align: center; color: #5eba5e;\">\n<a>Entwickelt von $author[0]\n<br/>\nLizenz: $lizenz</a>\n</div>\n</html>\n";
+$html_footer .= "<br/>\n<div style=\"opacity: 0.42; margin-left: auto; margin-right: auto; text-align: center; color: #5eba5e;\">\n<a>Entwickelt von $author[0] auf </a><a color=\"#5eba5e\" href=\"https://github.com/ffbsee/FFNodeList\">GitHub</a>\n<br/>\n<a>Lizenz: $lizenz</a>\n</div>\n";
+$html_footer .= "\n</body>\n</html>\n\n";
 $html_ffbsee .= $html_footer;
 $html_minimal .= $html_footer;
 #	Öffne eine Datei und generiere das JSON
