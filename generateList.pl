@@ -269,8 +269,9 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
         $ffHwP = $ffHwP + 1;
     } else {$ffHardware = "";}
     $html_ffbsee .= "<td>$ffHardware</td>";
-
-    my $ffCommunity = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"system"}->{"site_code"};
+    my $ffCommunity;
+    $ffCommunity = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"system"}->{"site_code"};
+    if (not defined($ffCommunity)){ $ffCommunity = "bodensee";}
     $html_ffbsee .= "<td>$ffCommunity</td>";
     if ($ffCommunity eq "bodensee"){
         $ffCB = $ffCB + 1;
