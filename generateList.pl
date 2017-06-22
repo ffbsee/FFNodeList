@@ -12,11 +12,12 @@ use HTML::Entities;
 our     @author = ("Freifunk Bodensee", "L3D");
 our     $lizenz = "CC-BY-NC";
 
-our $json_source = "/var/www/meshviewer/nodes.json";
-our $json_graph = "/var/www/meshviewer/graph.json";
-our $export = "/var/www/FFNodeList/liste.html";
+our $root = "/var/www";
+our $json_source = "$root/meshviewer/nodes.json";
+our $json_graph = "$root/meshviewer/graph.json";
+our $export = "$root/FFNodeList/liste.html";
 our $html_ffbsee;
-our $export_minimal = "/var/www/FFNodeList/index.html";
+our $export_minimal = "$root/FFNodeList/index.html";
 our $html_minimal;
 our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
