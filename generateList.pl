@@ -47,7 +47,7 @@ if (not($debug)){sleep 0.42;}
 #  nodes.json
 #
 open(DATEI, $json_source) or die "Datei nodes.json wurde nicht gefunden\n";
-    my $daten;
+    my $daten = "";
     while(<DATEI>){
          $daten = $daten.$_;
     }
@@ -59,7 +59,7 @@ our $ffbsee_json = $json->decode( $json_text ); #decode nodes.json
 #  graph.json
 #
 open(DATEI, $json_graph) or die "Datei graph.json wurde nicht gefunden\n";
-    my $graphdaten;
+    my $graphdaten = "";
     while(<DATEI>){                                                                                                                                 
          $graphdaten = $graphdaten.$_; 
     }
