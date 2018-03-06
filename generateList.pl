@@ -5,7 +5,7 @@ use JSON;
 use utf8;
 use LWP::Simple;
 use HTML::Entities;
-
+our $firmware = "1.0.3"; #aktuelle Firmware Version
 
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
@@ -102,7 +102,7 @@ our $ffClientInsg = 0;
 our $ffNodeGeo = 0;
 our $ffNodeFW = 0;
 
-our $firmware = "0.7.0";
+
 #
 #	Generiert das HTML:
 #
