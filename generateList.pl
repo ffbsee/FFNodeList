@@ -5,7 +5,7 @@ use JSON;
 use utf8;
 use LWP::Simple;
 use HTML::Entities;
-
+our $firmware = "1.0.3"; #aktuelle Firmware Version
 
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
@@ -47,7 +47,7 @@ if (not($debug)){sleep 0.42;}
 #  nodes.json
 #
 open(DATEI, $json_source) or die "Datei nodes.json wurde nicht gefunden\n";
-    my $daten;
+    my $daten = "";
     while(<DATEI>){
          $daten = $daten.$_;
     }
@@ -59,7 +59,7 @@ our $ffbsee_json = $json->decode( $json_text ); #decode nodes.json
 #  graph.json
 #
 open(DATEI, $json_graph) or die "Datei graph.json wurde nicht gefunden\n";
-    my $graphdaten;
+    my $graphdaten = "";
     while(<DATEI>){                                                                                                                                 
          $graphdaten = $graphdaten.$_; 
     }
@@ -102,7 +102,7 @@ our $ffClientInsg = 0;
 our $ffNodeGeo = 0;
 our $ffNodeFW = 0;
 
-our $firmware = "0.7.0";
+
 #
 #	Generiert das HTML:
 #

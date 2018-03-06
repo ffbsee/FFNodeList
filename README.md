@@ -1,18 +1,19 @@
-##SortableTables.js 
+SortableTables.js 
+=============================
 
 A simple Javascript library to make html tables sortable.
 It uses Array.from, which may not be available in your Javascript version. 
 You can find a polyfill at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from#Browser_compatibility).
 
 
-##generateList.pl
+## generateList.pl
 
 A simple Perl Script to generate a Freifunk Node List.
 The Script get his informations from the [Meshviewer](https://github.com/ffnord/meshviewer) [1](https://github.com/ffbsee/meshviewer). 
 The Meshviewer has a few JSON Files [²](https://vpn3.ffbsee.de/meshviewer/nodes.json) [³](https://vpn3.ffbsee.de/meshviewer/graph.json) and this script use them. Please have a look at the global variables from the script.
 
 
-#SortableTables
+# SortableTables
 
 Basic usage for the JavaScript:
 
@@ -44,7 +45,7 @@ More Questions?
 Have a look at the Source code [Source Code](https://raw.githubusercontent.com/ffbsee/FFNodeList/master/generateList.pl) or come to the next [Freifunk Bodensee](https://ffbsee.de) meeting.
 Feel free to fork this github repository for your own freifunk community.
 
-#Installation:
+# Installation:
 Gegebenenfalls braucht man noch das ein oder andere Perl Modul. Installierbar mit:
 
 ```
@@ -53,12 +54,12 @@ cpan install LWP::Simple
 ```
 
 
-#License:
+# License:
 
-##sortableTables.js
+## sortableTables.js
 
 MIT License - Copyright 2016, Gregory Vigo Torres
 
-##generateList.pl
+## generateList.pl
 
 CC-BY-NC - Freifunk Bodensee, L3D.
