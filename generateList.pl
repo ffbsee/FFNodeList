@@ -12,7 +12,7 @@ use HTML::Entities;
 our     @author = ("Freifunk Bodensee", "L3D");
 our     $lizenz = "CC-BY-NC";
 
-our $root = "/var/www";
+our $root = "/var/www/freifunk";
 our $json_source = "$root/meshviewer/nodes.json";
 our $json_graph = "$root/meshviewer/graph.json";
 our $export = "$root/FFNodeList/liste.html";
