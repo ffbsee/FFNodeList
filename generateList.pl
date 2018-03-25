@@ -22,7 +22,7 @@ our $html_minimal;
 our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
 our $fftitle = "Freifunk Node Liste";
-our $ffSupernode = {{ hostname }};
+our $ffSupernode = "{{ hostname }}";
 our $ff_statistik = "https://s.ffbsee.de/";
 chomp $ffSupernode;
 our $debug;
