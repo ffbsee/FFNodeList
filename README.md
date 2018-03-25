@@ -40,14 +40,14 @@ Rows can be skipped using class *skip-sort*.
 #Freifunk Node List
 The Perl Script generate an index.html and an liste.html. Both Pages display all freifunk nodes from the meshviewer JSON file.
 The index.html file only contains the most important informations. The list.html has a lot more information.
-Please have a look at [index.html](https://vpn3.ffbsee.de/FFNodeList/liste.html) and [list.html](https://vpn3.ffbsee.de/FFNodeList/index.html).
-More Questions?
-Have a look at the Source code [Source Code](https://raw.githubusercontent.com/ffbsee/FFNodeList/master/generateList.pl) or come to the next [Freifunk Bodensee](https://ffbsee.de) meeting.
 Feel free to fork this github repository for your own freifunk community.
 
 # Installation:
-Gegebenenfalls braucht man noch das ein oder andere Perl Modul. Installierbar mit:
 
+This is now the template for our ansible setup
+
+ Old infos:
+---
 ```
 cpan install JSON
 cpan install LWP::Simple

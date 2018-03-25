@@ -12,9 +12,9 @@ our $firmware = "1.0.3"; #aktuelle Firmware Version
 our     @author = ("Freifunk Bodensee", "L3D");
 our     $lizenz = "CC-BY-NC";
 
-our $root = "/var/www/freifunk";
-our $json_source = "$root/meshviewer/nodes.json";
-our $json_graph = "$root/meshviewer/graph.json";
+our $root = "/var/www/{{ hostname }}";
+our $json_source = "$root/nodes.json";
+our $json_graph = "$root/graph.json";
 our $export = "$root/FFNodeList/liste.html";
 our $html_ffbsee;
 our $export_minimal = "$root/FFNodeList/index.html";
@@ -22,7 +22,7 @@ our $html_minimal;
 our $ffcommunity = "Freifunk Bodensee";
 our $ffLink = "https://freifunk-bodensee.net/";
 our $fftitle = "Freifunk Node Liste";
-our $ffSupernode = `hostname`;
+our $ffSupernode = {{ hostname }};
 our $ff_statistik = "https://s.ffbsee.de/";
 chomp $ffSupernode;
 our $debug;
