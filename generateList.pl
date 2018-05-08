@@ -5,7 +5,7 @@ use JSON;
 use utf8;
 use LWP::Simple;
 use HTML::Entities;
-our $firmware = "1.0.3"; #aktuelle Firmware Version
+our $firmware = "1.0.5"; #aktuelle Firmware Version
 
 #	Hier werden einige globale Parameter festgelegt
 #	wie zum Beispiel der absolute Speicherpfad der Freifunk JSON.
