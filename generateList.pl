@@ -145,7 +145,7 @@ our $html_body;
 $html_body .= "  </head>\n\n<body>\n";
 $html_body .= "<ul>";
 $html_body .= "<li><a href=\"$ffLink\">$ffcommunity</a></li>\n<li><a href=\"https://$ffSupernode/\">$ffSupernode</a></li>\n";
-$html_body .= "<li><a href=\"https://$ffSupernode/meshviewer/\">Meshviewer</a></li>\n";
+$html_body .= "<li><a href=\"https://meta.ffbsee.net/meshviewer/\">Meshviewer</a></li>\n";
 $html_body .= "<li><a href=\"$community_freifunk_karte\">freifunk-karte.de</a></li>\n<li><a href=\"$ff_statistik\">Statistik</a></li>\n";
 $html_ffbsee .= $html_body;
 $html_minimal .= $html_body;
@@ -188,8 +188,8 @@ for my $ffkey (keys %{$hashref_ffbsee}) {
     if ($debug) { print "$ffkey\n"; }
     my $ffNodeName = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"hostname"};
     my $ffNodeLnk = $ffbsee_json->{"nodes"}->{"$ffkey"}->{"nodeinfo"}->{"node_id"};
-    $html_ffbsee .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
-    $html_minimal .= "<td><a href=\"https://$ffSupernode/meshviewer/#!v:m;n:$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
+    $html_ffbsee .= "<td><a href=\"https://meta.ffbsee.net/meshviewer/#!/de/map/$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
+    $html_minimal .= "<td><a href=\"https://meta.ffbsee.net/meshviewer/#!/de/map/$ffNodeLnk\" target=\"_blank\">".encode_entities($ffNodeName)."</a></td>";
 
     # Anzeige der IPv6 Adresse des FF Nodes:
     # Im minnimal:
