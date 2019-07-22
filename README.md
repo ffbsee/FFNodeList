@@ -1,6 +1,14 @@
 SortableTables.js 
 =============================
 
+```warning
+ACHTUNG
+
+Die aktuelle Meshviewer syntax ist gänzlich inkompatibel...
+müsste mal jemand reparieren oder noch besser:
+Nachbauen in python!
+```
+
 A simple Javascript library to make html tables sortable.
 It uses Array.from, which may not be available in your Javascript version. 
 You can find a polyfill at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from#Browser_compatibility).
