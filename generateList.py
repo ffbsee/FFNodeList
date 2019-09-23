@@ -10,7 +10,7 @@
 #* ----------------------------------------------------------------------------/
 
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import sys
 from datetime import datetime
 from html_strings import *
@@ -27,12 +27,12 @@ newest_firmware = '2.0.0'
 
 #declaration
 nodes_count = 0
-location_count = 0.0
+location_count = 0
 online_count = 0
 clients_count = 0
-community_count = 0.0
-newest_firmware_count = 0.0
-with_hardware_count = 0.0
+community_count = 0
+newest_firmware_count = 0
+with_hardware_count = 0
 html_body_long = ''
 html_body_short = ''
 debug = False
@@ -66,8 +66,7 @@ def  calc_uptime(uptime):
     if uptime != '':
         uptime_datetime_obj = datetime.strptime(uptime, '%Y-%m-%d %H:%M:%S')
         uptime_diff = datetime.now() - uptime_datetime_obj
-        return str(uptime_diff.days * 24 + (uptime_diff.seconds / 3600)) + ':' + str(uptime_diff.seconds % 60)
-        #return str(uptime_diff / 3600)
+        return str(abs(uptime_diff.days * 24 ) + abs(uptime_diff.seconds // 3600)) + ':' + str(uptime_diff.seconds % 60)
     else:
         return ''
 
@@ -81,7 +80,7 @@ def count_connections(node_id, links):
 
 if len(sys.argv) -1 > 0:
     if (sys.argv[1] == '--help')  or (sys.argv[1] == '-h'):
-        print '''This script generates a sortable list of all nodes in the FFBSee network
+        print('''This script generates a sortable list of all nodes in the FFBSee network
 To enable debug mode use the argument ""--debug".
 The argument "--help" show this help.
 
@@ -96,7 +95,7 @@ Following setting can be set in the script:
 * newest_firmware:      Version of the newest firmware. 19/09 is 2.0.0
 
     Author: %s (%s)
-    License: %s''' % ( author, post, license )
+    License: %s''' % ( author, post, license ))
         sys.exit(0)
 
     if (sys.argv[1] == '--debug') or (sys.argv[1] == '-d'):
@@ -107,8 +106,8 @@ if local_file == True:
     json_data = json.loads(json_file.read())
     json_file.close()
 else:
-    json_url = urllib.urlopen(root+nodes)
-    json_data = json.loads(json_url.read())
+    json_url = urllib.request.urlopen(root+nodes)
+    json_data = json.loads(json_url.read().decode('utf-8'))
 
 for nodes in json_data['nodes']:
     hostname = nodes['hostname']
@@ -124,18 +123,18 @@ for nodes in json_data['nodes']:
     addresses = nodes['addresses']
 
     if debug == True:
-        print 'Hostname: '+hostname
-        print 'Node ID: ' +node_id
-        print 'Online: ' +str(is_online)
-        print 'Uptime: '+str(uptime)
-        print 'Clients: ' +str(clients)
-        print 'Location: ' + str(location)
-        print 'firmware: ' +firmware_release
-        print 'Model: ' +model
-        print 'Community: ' +str(site_code)
-        print 'Clients: ' +str(clients)
-        print 'Adresses: ' +str(len(addresses))
-        print '+-----------------------------------+'
+        print('Hostname: '+hostname)
+        print('Node ID: ' +node_id)
+        print('Online: ' +str(is_online))
+        print('Uptime: '+str(uptime))
+        print('Clients: ' +str(clients))
+        print('Location: ' + str(location))
+        print('firmware: ' +firmware_release)
+        print('Model: ' +model)
+        print('Community: ' +str(site_code))
+        print('Clients: ' +str(clients))
+        print('Adresses: ' +str(len(addresses)))
+        print('+-----------------------------------+')
 
     nodes_count = nodes_count + 1
 
@@ -212,22 +211,23 @@ if nodes_count != 0:
     percent_with_hardware = round((with_hardware_count/nodes_count) * 100, 2)
 
 timestamp = json_data['meta']['timestamp']
+timestamp = timestamp.replace('T', ' ')
 
 connections = len(json_data['links'])
 
 if debug == True:
-    print '+-----------------------------------+'
-    print 'Statistics:'
-    print 'Timestamp: ' +timestamp
-    print 'Nodes: ' +str(nodes_count)
-    print 'Online Nodes: ' +str(online_count)
-    print 'With coordinates: ' +str(percent_with_location) + '%'
-    print 'Verbindungen: ' +str(connections)
-    print 'Clients: ' + str(clients_count)
-    print 'With community: ' +str(percent_with_community)
-    print 'With newest firmware: ' +str(percent_with_newest_firmware) + '%'
-    print 'Share Hardware: ' +str(percent_with_hardware) + '%'
-    print '+-----------------------------------+'
+    print('+-----------------------------------+')
+    print('Statistics:')
+    print('Timestamp: ' +timestamp)
+    print('Nodes: ' +str(nodes_count))
+    print('Online Nodes: ' +str(online_count))
+    print('With coordinates: ' +str(percent_with_location) + '%')
+    print('Verbindungen: ' +str(connections))
+    print('Clients: ' + str(clients_count))
+    print('With community: ' +str(percent_with_community))
+    print('With newest firmware: ' +str(percent_with_newest_firmware) + '%')
+    print('Share Hardware: ' +str(percent_with_hardware) + '%')
+    print('+-----------------------------------+')
 
 
 html_head = html_head.replace('--TIMESTAMP--', timestamp)
@@ -242,9 +242,9 @@ html_footer_long = html_footer_long.replace('--PERCENT_WITH_NEWEST_FIRMWARE--', 
 html_footer_long = html_footer_long.replace('--PERCENT_WITH_HARDWARE--', str(percent_with_hardware))
 
 #Write long HTML File
-html_file = open(html_pathname + html_filename_list, 'w')
+html_file = open(html_pathname + html_filename_list, 'wb')
 html_content = html_head + html_table_long + html_body_long + html_footer_long
-html_file.write(html_content.encode('utf8'))
+html_file.write(html_content.encode('utf-8'))
 html_file.close()
 
 
@@ -255,7 +255,7 @@ html_footer_short = html_footer_short.replace('--NEWEST_FIRMWARE--', newest_firm
 html_footer_short = html_footer_short.replace('--PERCENT_WITH_NEWEST_FIRMWARE--', str(percent_with_newest_firmware))
 
 #Write short HTML File
-html_file = open(html_pathname + html_filename_index, 'w')
+html_file = open(html_pathname + html_filename_index, 'wb')
 html_content = html_head + html_table_short + html_body_short + html_footer_short
 html_file.write(html_content.encode('utf8'))
 html_file.close()
