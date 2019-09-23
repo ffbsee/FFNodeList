@@ -211,6 +211,7 @@ if nodes_count != 0:
     percent_with_hardware = round((with_hardware_count/nodes_count) * 100, 2)
 
 timestamp = json_data['meta']['timestamp']
+timestamp = timestamp.replace('T', ' ')
 
 connections = len(json_data['links'])
 
