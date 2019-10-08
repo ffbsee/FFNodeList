@@ -56,7 +56,7 @@ This is now the template for our Ansible setup
 ```
 pip install datetime
 ```
-All other used modules are in built-in on python3.
+All other used modules are built-in on python3.
 
 # License:
 
