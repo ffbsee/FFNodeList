@@ -1,13 +1,10 @@
-SortableTables.js
-=============================
-
-A simple Javascript library to make html tables sortable.
-It uses Array.from, which may not be available in your Javascript version.
-You can find a polyfill at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from#Browser_compatibility).
+FFNodeList
+==========
 
 ## generateList.py
 A simple python skript to generate a Freifunk Node List.
-This is just a remake of the deprecated generateList.pl skript
+The Script get his informations from the [Meshviewer](https://github.com/ffnord/meshviewer) [¹](https://github.com/ffbsee/meshviewer).
+The Meshviewer has a JSON File [²](https://mate.ffbsee.de/meshviewer/nodes.json) which is used from the script.
 
 Following setting can be set in the script:
 * root:                 The url to the server where to find the nodes.json. e.g. https://mate.ffbsee.net/
@@ -19,15 +16,15 @@ Following setting can be set in the script:
 * local_file:           Enable to True when a local file have to be opened
 * newest_firmware:      Version of the newest firmware. 19/09 is 2.0.0
 
-
-## generateList.pl - Outdated
-
-A simple Perl Script to generate a Freifunk Node List.
-The Script get his informations from the [Meshviewer](https://github.com/ffnord/meshviewer) [1](https://github.com/ffbsee/meshviewer).
-The Meshviewer has a few JSON Files [²](https://vpn3.ffbsee.de/meshviewer/nodes.json) [³](https://vpn3.ffbsee.de/meshviewer/graph.json) and this script use them. Please have a look at the global variables from the script.
-
+The Script generate an index.html and an liste.html. Both Pages display all Freifunk nodes from the meshviewer JSON file.
+The index.html file only contains the most important informations. The list.html has a lot more information.
+Feel free to fork this github repository for your own Freifunk community.
 
 # SortableTables
+
+A simple Javascript library to make html tables sortable.
+It uses Array.from, which may not be available in your Javascript version.
+You can find a polyfill at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from#Browser_compatibility).
 
 Basic usage for the JavaScript:
 
@@ -51,32 +48,21 @@ Currently implemented sort criteria are:
 Rows can be skipped using class *skip-sort*.
 *thead* and *tfoot* elements are always skipped.
 
-#Freifunk Node List
-The Script generate an index.html and an liste.html. Both Pages display all freifunk nodes from the meshviewer JSON file.
-The index.html file only contains the most important informations. The list.html has a lot more information.
-Feel free to fork this github repository for your own freifunk community.
-
 # Installation:
 
-This is now the template for our ansible setup
+This is now the template for our Ansible setup
 
- Old infos:
 ---
 ```
-cpan install JSON
-cpan install LWP::Simple
+pip install datetime
 ```
-
+All other used modules are in built-in on python3.
 
 # License:
 
 ## sortableTables.js
 
-MIT License - Copyright 2016, Gregory Vigo Torres
-
-## generateList.pl
-
-CC-BY-NC - Freifunk Bodensee, L3D.
+MIT License - Copyright 2016, Gregory Vigo Torres [³](https://github.com/GregoryVigoTorres/sortableTables)
 
 ## generateList.py
 CC-BY-NC - Joni Arida
