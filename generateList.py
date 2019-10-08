@@ -146,7 +146,6 @@ for nodes in json_data['nodes']:
     var_have_geo = have_geo(location)
     var_site_code = str(site_code)
 
-
     html_body_long = html_body_long +'<tr class="'
     html_body_long = html_body_long + var_odd
     html_body_long = html_body_long + '"><td><a href="https://mate.ffbsee.net/meshviewer/#!/de/map/'
@@ -185,7 +184,6 @@ for nodes in json_data['nodes']:
     html_body_short = html_body_short + firmware_release
     html_body_short = html_body_short + '</td>\n'
 
-
     if var_have_geo == 'Ja':
         location_count = location_count + 1
 
@@ -202,7 +200,6 @@ for nodes in json_data['nodes']:
         with_hardware_count = with_hardware_count + 1
 
     clients_count = clients_count + clients
-
 
 if nodes_count != 0:
     percent_with_location = round((location_count/nodes_count) * 100, 2)
@@ -229,8 +226,9 @@ if debug == True:
     print('Share Hardware: ' +str(percent_with_hardware) + '%')
     print('+-----------------------------------+')
 
-
+html_head = html_head.replace('liste.html', 'index.html')
 html_head = html_head.replace('--TIMESTAMP--', timestamp)
+
 html_footer_long = html_footer_long.replace('--NODES_COUNT--', str(nodes_count))
 html_footer_long = html_footer_long.replace('--ONLINE_NODES--', str(online_count))
 html_footer_long = html_footer_long.replace('--PERCENT_WITH_LOCATION--', str(percent_with_location))
@@ -247,7 +245,7 @@ html_content = html_head + html_table_long + html_body_long + html_footer_long
 html_file.write(html_content.encode('utf-8'))
 html_file.close()
 
-
+html_head = html_head.replace('index.html', 'liste.html')
 html_footer_short = html_footer_short.replace('--NODES_COUNT--', str(nodes_count))
 html_footer_short = html_footer_short.replace('--ONLINE_NODES--', str(online_count))
 html_footer_short = html_footer_short.replace('--CLIENTS--', str(clients_count))
