@@ -23,7 +23,7 @@ html_filename_index = 'index.html'
 html_pathname = './'
 local_path  = './'
 local_file = False
-newest_firmware = '2.0.0'
+newest_firmware = '2.2.0'
 
 #declaration
 nodes_count = 0
